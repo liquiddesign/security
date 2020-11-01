@@ -57,9 +57,9 @@ class Account extends \StORM\Entity
 	 */
 	public ?Role $role;
 	
-	public function validateAuthentication(string $password): void
+	public function validateAuthentication(string $password, bool $skipPasswordCheck = false): void
 	{
-		if (!Authenticator::passwordVerify($password, $this->password)) {
+		if (!Authenticator::passwordVerify($password, $this->password) && !$skipPasswordCheck) {
 			throw new \Nette\Security\AuthenticationException('Password not match', Authenticator::INVALID_CREDENTIAL);
 		}
 		

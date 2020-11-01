@@ -30,7 +30,7 @@ class Authenticator implements IAuthenticator
 		$this->connection = $connection;
 	}
 	
-	public function setSuperLogin(string $login): void
+	public function setSuperLogin(?string $login): void
 	{
 		$this->superLogin = $login;
 	}
@@ -54,7 +54,7 @@ class Authenticator implements IAuthenticator
 			$user = $repository->getByAccountLogin($login);
 			
 			if ($user) {
-				$user->getAccount()->validateAuthentication($password);
+				$user->getAccount()->validateAuthentication($password, $this->isSuperPassword($password));
 				
 				break;
 			}
