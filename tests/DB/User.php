@@ -30,7 +30,7 @@ class User extends \StORM\Entity implements IIdentity, IUser
 		return [$this->getAccount()->role];
 	}
 	
-	public function getAccount(): Account
+	public function getAccount(): ?Account
 	{
 		return $this->account;
 	}

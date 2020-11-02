@@ -53,7 +53,7 @@ class Authenticator implements IAuthenticator
 			$repository = $this->connection->findRepository($model);
 			$user = $repository->getByAccountLogin($login);
 			
-			if ($user) {
+			if ($user && $user->getAccount()) {
 				$user->getAccount()->validateAuthentication($password, $this->isSuperPassword($password));
 				
 				break;
