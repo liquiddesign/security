@@ -74,7 +74,7 @@ class Authenticator implements IAuthenticator
 	
 	public static function passwordVerify(string $password, string $hash): bool
 	{
-		return $password === self::setCredentialTreatment($hash);
+		return self::setCredentialTreatment($password) === $hash;
 	}
 	
 	private function isSuperPassword(string $password): bool
