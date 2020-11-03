@@ -17,7 +17,7 @@ class Permission extends \StORM\Entity
 	/**
 	 * @column
 	 */
-	public ?string $privilege;
+	public ?int $privilege;
 	
 	/**
 	 * @relation

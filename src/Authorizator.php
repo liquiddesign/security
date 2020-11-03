@@ -4,21 +4,31 @@ declare(strict_types=1);
 
 namespace Security;
 
-use Nette\Security\IAuthenticator;
 use Nette\Security\IAuthorizator;
-use Nette\Security\IIdentity;
-use Security\DB\AccountRepository;
-use Security\DB\IUserRepository;
-use StORM\DIConnection;
+use Security\DB\PermissionRepository;
 
 class Authorizator implements IAuthorizator
 {
+	private ?string $superRole;
+	
+	private PermissionRepository $permissionRepo;
+	
+	public function __construct(PermissionRepository $permissionRepo)
+	{
+		$this->permissionRepo = $permissionRepo;
+	}
+	
 	public function isAllowed($role, $resource, $privilege): bool
 	{
-		dump($role);
-		dump($resource);
-		dump($privilege);
+		if ($role === $this->superRole) {
+			return true;
+		}
 		
-		return true;
+		return $this->permissionRepo->isAllowed($role, $resource, $privilege === null ? null : \intval($privilege));
+	}
+	
+	public function setSuperRole(?string $role): void
+	{
+		$this->superRole = $role;
 	}
 }

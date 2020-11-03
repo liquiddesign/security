@@ -18,6 +18,7 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 	{
 		return Expect::structure([
 			'superLogin' => Expect::string(null),
+			'superRole' => Expect::string(null),
 		]);
 	}
 	
@@ -38,7 +39,8 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 		$authenticator->addSetup('setSuperLogin', [$config['superLogin']]);
 		
 		// add authorizator
-		$builder->addDefinition('authorizator')->setType(Authorizator::class);
+		$authorizator = $builder->addDefinition('authorizator')->setType(Authorizator::class);
+		$authorizator->addSetup('setSuperRole', [$config['superRole']]);
 		
 		return;
 	}
