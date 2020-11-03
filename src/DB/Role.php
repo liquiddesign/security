@@ -15,10 +15,4 @@ class Role extends \StORM\Entity
 	 * @column
 	 */
 	public string $name;
-	
-	/**
-	 * @relation
-	 * @var \Security\DB\Permission[]|\StORM\RelationCollection
-	 */
-	public RelationCollection $permissions;
 }

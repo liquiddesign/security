@@ -7,6 +7,7 @@ namespace Security\Bridges;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Security\Authenticator;
+use Security\Authorizator;
 use Security\DB\AccountRepository;
 use Security\DB\PermissionRepository;
 use Security\DB\RoleRepository;
@@ -35,6 +36,9 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 		// add authenticator
 		$authenticator = $builder->addDefinition('authenticator')->setType(Authenticator::class);
 		$authenticator->addSetup('setSuperLogin', [$config['superLogin']]);
+		
+		// add authorizator
+		$builder->addDefinition('authorizator')->setType(Authorizator::class);
 		
 		return;
 	}
