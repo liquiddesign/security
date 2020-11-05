@@ -10,7 +10,8 @@ use Security\Authenticator;
 use Security\Authorizator;
 use Security\Control\IChangePasswordFormFactory;
 use Security\Control\ILoginFormFactory;
-use Security\Control\LoginForm;
+use Security\Control\ILostPasswordFormFactory;
+use Security\Control\IRegistrationFormFactory;
 use Security\DB\AccountRepository;
 use Security\DB\PermissionRepository;
 use Security\DB\RoleRepository;
@@ -27,7 +28,7 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 	
 	public function loadConfiguration(): void
 	{
-		$config = (array) $this->getConfig();
+		$config = (array)$this->getConfig();
 		
 		/** @var \Nette\DI\ContainerBuilder $builder */
 		$builder = $this->getContainerBuilder();
@@ -35,6 +36,8 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 		// add controls
 		$builder->addFactoryDefinition($this->prefix('loginFormFactory'))->setImplement(ILoginFormFactory::class);
 		$builder->addFactoryDefinition($this->prefix('changePasswordFormFactory'))->setImplement(IChangePasswordFormFactory::class);
+		$builder->addFactoryDefinition($this->prefix('lostPasswordFormFactory'))->setImplement(ILostPasswordFormFactory::class);
+		$builder->addFactoryDefinition($this->prefix('registrationFormFactory'))->setImplement(IRegistrationFormFactory::class);
 		
 		// add repositories
 		$builder->addDefinition($this->prefix('accounts'))->setType(AccountRepository::class);

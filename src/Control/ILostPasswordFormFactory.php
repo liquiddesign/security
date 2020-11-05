@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\User\Controls;
+namespace Security\Control;
 
 interface ILostPasswordFormFactory
 {
-	public function create(): LostPasswordForm;
+	public function create(string $class): LostPasswordForm;
 }

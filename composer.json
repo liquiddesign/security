@@ -20,6 +20,7 @@
 		"tracy/tracy":"*",
 		"liquiddesign/storm": "@dev",
 		"liquiddesign/forms": "@dev",
+		"liquiddesign/messages": "@dev",
 		"ext-pdo": "*"
 	},
 	"require-dev":

@@ -7,6 +7,7 @@ namespace Security\Control;
 use Nette;
 use Security\DB\Account;
 use Security\DB\IUser;
+use Security\DB\UserRepositoryTrait;
 
 /**
  * @method onLogin(\Security\Control\LoginForm $form)
@@ -14,6 +15,8 @@ use Security\DB\IUser;
  */
 class LoginForm extends \Nette\Application\UI\Form
 {
+	use SecurityFormTrait;
+	
 	/**
 	 * @var callable[]&callable(\Security\Control\LoginForm): void; Occurs after login
 	 */
@@ -28,9 +31,17 @@ class LoginForm extends \Nette\Application\UI\Form
 	
 	private string $class;
 	
-	public function __construct(Nette\Security\User $user, Nette\Localization\ITranslator $translator, string $class)
+	public function __construct(string $class, Nette\Security\User $user, Nette\Localization\ITranslator $translator)
 	{
 		parent::__construct();
+		
+		$this->user = $user;
+		
+		if (!is_subclass_of($class,IUser::class) || !is_subclass_of($class,Nette\Security\IIdentity::class)) {
+			throw new \InvalidArgumentException("Wrong or empty class: $class");
+		}
+		
+		$this->class = $class;
 		
 		$this->setTranslator($translator);
 		$this->addText('login', 'loginForm.login')->setRequired(true);
@@ -38,13 +49,6 @@ class LoginForm extends \Nette\Application\UI\Form
 		$this->addSubmit('submit', 'loginForm.submit');
 		$this->onSuccess[] = [$this, 'submit'];
 		
-		$this->user = $user;
-		
-		if (!isset($class) || !is_subclass_of($class,IUser::class) || !is_subclass_of($class,Nette\Security\IIdentity::class)) {
-			throw new \DomainException("Wrong or empty class: $class");
-		}
-		
-		$this->class = $class;
 	}
 	
 	protected function submit(): void

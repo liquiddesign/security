@@ -14,6 +14,7 @@ use StORM\Repository;
  */
 class ChangePasswordForm extends \Nette\Application\UI\Form
 {
+	use SecurityFormTrait;
 	/**
 	 * @var callable[]&callable(\Security\Control\ChangePasswordForm): void; Occurs after change
 	 */
@@ -29,25 +30,26 @@ class ChangePasswordForm extends \Nette\Application\UI\Form
 	
 	private Repository $repository;
 	
-	public function __construct(DIConnection $connection, Nette\Security\User $user, Nette\Localization\ITranslator $translator, string $class)
+	public function __construct(string $class, DIConnection $connection, Nette\Security\User $user, Nette\Localization\ITranslator $translator)
 	{
 		parent::__construct();
 		$this->connection = $connection;
+		
+		if (!$user->getIdentity()) {
+			throw new \InvalidArgumentException('Damaged user identity!');
+		}
+		
 		$this->user = $user;
 		
 		if (!isset($class) || !is_subclass_of($class, IUser::class) || !is_subclass_of($class, Nette\Security\IIdentity::class)) {
-			throw new \DomainException("Wrong or empty class: $class");
+			throw new \InvalidArgumentException("Wrong or empty class: $class");
 		}
 		$this->class = $class;
 		
 		$this->repository = $this->connection->findRepository($this->class);
 		
 		if (!$this->repository) {
-			throw new \DomainException("Repository for class \"$class\" not found!");
-		}
-		
-		if (!$user->getIdentity()) {
-			throw new \DomainException('Damaged user identity!');
+			throw new \InvalidArgumentException("Repository for class \"$class\" not found!");
 		}
 		
 		$this->setTranslator($translator);
