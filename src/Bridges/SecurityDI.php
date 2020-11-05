@@ -8,6 +8,7 @@ use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Security\Authenticator;
 use Security\Authorizator;
+use Security\Control\IChangePasswordFormFactory;
 use Security\Control\ILoginFormFactory;
 use Security\Control\LoginForm;
 use Security\DB\AccountRepository;
@@ -33,6 +34,7 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 		
 		// add controls
 		$builder->addFactoryDefinition($this->prefix('loginFormFactory'))->setImplement(ILoginFormFactory::class);
+		$builder->addFactoryDefinition($this->prefix('changePasswordFormFactory'))->setImplement(IChangePasswordFormFactory::class);
 		
 		// add repositories
 		$builder->addDefinition($this->prefix('accounts'))->setType(AccountRepository::class);

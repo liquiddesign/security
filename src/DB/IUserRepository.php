@@ -7,4 +7,6 @@ namespace Security\DB;
 interface IUserRepository
 {
 	public function getByAccountLogin(string $login): ?IUser;
+	
+	//public function changePassword(string $uuid, string $newPassword): ?IUser;
 }

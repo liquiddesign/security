@@ -41,7 +41,7 @@ class LoginForm extends \Nette\Application\UI\Form
 		$this->user = $user;
 		
 		if (!isset($class) || !is_subclass_of($class,IUser::class) || !is_subclass_of($class,Nette\Security\IIdentity::class)) {
-			throw new \DomainException('Wrong or empty class!');
+			throw new \DomainException("Wrong or empty class: $class");
 		}
 		
 		$this->class = $class;
