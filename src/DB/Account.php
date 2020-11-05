@@ -52,6 +52,12 @@ class Account extends \StORM\Entity
 	public ?string $tsLastLogin;
 	
 	/**
+	 * Token pro registraci a obnovu hesla
+	 * @column
+	 */
+	public string $emailAndPasswordConfirmationToken;
+	
+	/**
 	 * @relation
 	 * @constraint
 	 */
@@ -77,5 +83,15 @@ class Account extends \StORM\Entity
 	public function isActive(): bool
 	{
 		return $this->active && ($this->activeFrom === null || \strtotime($this->activeFrom) <= \time()) && ($this->activeTo === null || \strtotime($this->activeTo) >= \time());
+	}
+	
+	public function changePassword(string $newPassword): void
+	{
+		$this->update(['password' => Authenticator::setCredentialTreatment($newPassword)]);
+	}
+	
+	public function checkPassword(string $password): bool
+	{
+		return Authenticator::passwordVerify($password, $this->password);
 	}
 }

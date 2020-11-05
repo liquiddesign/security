@@ -40,10 +40,6 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 		
 		$this->repository = $connection->findRepository($class);
 		
-		if (!$this->repository) {
-			throw new \InvalidArgumentException("Repository for class \"$class\" not found!");
-		}
-		
 		$this->setTranslator($translator);
 		$this->addText('email', 'lostPasswordForm.email')
 			->addRule($this::EMAIL)
@@ -65,7 +61,7 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 		$token = Nette\Utils\Random::generate(128);
 		
 		$customer = $this->repository->one(['email' => $values->email]);
-		$customer->update(['emailAndPasswordConfirmationToken' => $token]);
+		$customer->account->update(['emailAndPasswordConfirmationToken' => $token]);
 		
 		$mail = $this->templateRepository->createMessage('lostPassword', $params + ['link' => $this->getPresenter()->link('//generateNewPassword!', [$token, $values->email])], $values->email);
 		$this->mailer->send($mail);

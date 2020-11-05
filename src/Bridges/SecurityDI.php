@@ -23,6 +23,15 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 		return Expect::structure([
 			'superLogin' => Expect::string(null),
 			'superRole' => Expect::string(null),
+			'registration' => Expect::structure([
+				'enabled' =>  Expect::bool(true),
+				'default' => Expect::structure([
+					'type' => Expect::string('retail'),
+				]),
+				'confirmation' => Expect::bool(false),
+				'confirmationEmail' => Expect::string(),
+				'emailAuthorization' => Expect::bool(true),
+			]),
 		]);
 	}
 	
@@ -37,7 +46,9 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 		$builder->addFactoryDefinition($this->prefix('loginFormFactory'))->setImplement(ILoginFormFactory::class);
 		$builder->addFactoryDefinition($this->prefix('changePasswordFormFactory'))->setImplement(IChangePasswordFormFactory::class);
 		$builder->addFactoryDefinition($this->prefix('lostPasswordFormFactory'))->setImplement(ILostPasswordFormFactory::class);
-		$builder->addFactoryDefinition($this->prefix('registrationFormFactory'))->setImplement(IRegistrationFormFactory::class);
+		
+		$registrationForm = $builder->addFactoryDefinition($this->prefix('registrationFormFactory'))->setImplement(IRegistrationFormFactory::class);
+		$registrationForm->getResultDefinition()->addSetup('setRegistrationConfig',[$config['registration']]);
 		
 		// add repositories
 		$builder->addDefinition($this->prefix('accounts'))->setType(AccountRepository::class);

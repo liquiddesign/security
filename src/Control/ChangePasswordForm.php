@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Security\Control;
 
 use Nette;
+use Security\DB\AccountRepository;
 use Security\DB\IUser;
 use StORM\DIConnection;
 use StORM\Repository;
@@ -38,7 +39,6 @@ class ChangePasswordForm extends \Nette\Application\UI\Form
 		if (!$user->getIdentity()) {
 			throw new \InvalidArgumentException('Damaged user identity!');
 		}
-		
 		$this->user = $user;
 		
 		if (!isset($class) || !is_subclass_of($class, IUser::class) || !is_subclass_of($class, Nette\Security\IIdentity::class)) {
@@ -48,13 +48,11 @@ class ChangePasswordForm extends \Nette\Application\UI\Form
 		
 		$this->repository = $this->connection->findRepository($this->class);
 		
-		if (!$this->repository) {
-			throw new \InvalidArgumentException("Repository for class \"$class\" not found!");
-		}
+		$this->user->getIdentity()->setParent($this->repository);
 		
 		$this->setTranslator($translator);
 		$this->addPassword('oldPassword')
-			->addRule(self::OLD_PASSWORD_VALIDATOR, 'changePasswordForm.oldPasswordCheck.notEqual', [$this->repository, $user])
+			->addRule(self::OLD_PASSWORD_VALIDATOR, 'changePasswordForm.oldPasswordCheck.notEqual', $user)
 			->setRequired();
 		$this->addPassword('password')
 			->setRequired();
@@ -67,23 +65,21 @@ class ChangePasswordForm extends \Nette\Application\UI\Form
 		
 	}
 	
-	/**
-	 * @param \Nette\Forms\IControl $control
-	 * @param array $args
-	 * [0] CustomerRepository
-	 * [1] Nette\Security\User
-	 * @return mixed
-	 */
-	public static function validateOldPassword(\Nette\Forms\IControl $control, array $args)
+	public static function validateOldPassword(\Nette\Forms\IControl $control, Nette\Security\User $user)
 	{
-		return $args[0]->checkPassword($args[1]->getIdentity()->uuid, $control->getValue());
+		/** @var \Security\DB\Account $account */
+		$account = $user->getIdentity()->getAccount();
+		return $account->checkPassword($control->getValue());
 	}
 	
 	public function success(): void
 	{
 		$values = $this->getValues();
 		
-		$this->repository->changePassword($this->user->getIdentity()->uuid, $values->password);
+		/** @var \Security\DB\Account $account */
+		$account = $this->user->getIdentity()->getAccount();
+		
+		$account->changePassword($values->password);
 		
 		$this->onChange($this);
 	}
