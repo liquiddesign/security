@@ -62,12 +62,9 @@ class RegistrationForm extends \Nette\Application\UI\Form
 			->addRule($this::EQUAL, 'registerForm.passwordCheck.notEqual', $this['password'])
 			->setRequired();
 		
-		$this->onSuccess[] = [$this, 'success'];
-	}
-	
-	protected function beforeRender()
-	{
 		$this->addSubmit('submit', 'registerForm.submit');
+		
+		$this->onSuccess[] = [$this, 'success'];
 	}
 	
 	public function setConfirmation(bool $confirmation = true): void

@@ -45,12 +45,9 @@ class LoginForm extends \Nette\Application\UI\Form
 		$this->addText('login', 'loginForm.login')->setRequired(true);
 		$this->addPassword('password', 'loginForm.password')->setRequired(true);
 		
-		$this->onSuccess[] = [$this, 'submit'];
-	}
-	
-	protected function beforeRender()
-	{
 		$this->addSubmit('submit', 'loginForm.submit');
+		
+		$this->onSuccess[] = [$this, 'submit'];
 	}
 	
 	protected function submit(): void

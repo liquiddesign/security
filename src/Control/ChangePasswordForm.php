@@ -61,15 +61,11 @@ class ChangePasswordForm extends \Nette\Application\UI\Form
 		$this->addPassword('passwordCheck')
 			->addRule($this::EQUAL, 'changePasswordForm.passwordCheck.notEqual', $this['password'])
 			->setRequired();
-		
+		$this->addSubmit('submit');
 		
 		$this->onSuccess[] = [$this, 'success'];
 	}
 	
-	protected function beforeRender()
-	{
-		$this->addSubmit('submit');
-	}
 	
 	public function success(): void
 	{
