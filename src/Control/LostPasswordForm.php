@@ -15,26 +15,27 @@ use StORM\Repository;
  */
 class LostPasswordForm extends \Nette\Application\UI\Form
 {
+	public const EMAIL_EXISTS = '\Security\Control\LostPasswordForm::validateEmail';
+
 	/**
 	 * @var callable[]&callable(\Security\Control\LostPasswordForm): void; Occurs after recover
 	 */
 	public $onRecover;
 	
-	const EMAIL_EXISTS = '\Security\Control\LostPasswordForm::validateEmail';
+	protected TemplateRepository $templateRepository;
 	
-	private TemplateRepository $templateRepository;
+	protected Nette\Mail\Mailer $mailer;
 	
-	private Nette\Mail\Mailer $mailer;
-	
-	private Repository $repository;
+	protected Repository $repository;
 	
 	public function __construct(string $class, DIConnection $connection, Nette\Localization\ITranslator $translator, Nette\Mail\Mailer $mailer, TemplateRepository $templateRepository)
 	{
 		parent::__construct();
+
 		$this->templateRepository = $templateRepository;
 		$this->mailer = $mailer;
 		
-		if (!isset($class) || !is_subclass_of($class, IUser::class) || !is_subclass_of($class, Nette\Security\IIdentity::class)) {
+		if (!\is_subclass_of($class, IUser::class) || !\is_subclass_of($class, Nette\Security\IIdentity::class)) {
 			throw new \InvalidArgumentException("Wrong or empty class: $class");
 		}
 		
@@ -48,7 +49,6 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 		$this->addSubmit('submit');
 		
 		$this->onSuccess[] = [$this, 'success'];
-		
 	}
 	
 	public function success(LostPasswordForm $form): void
@@ -72,5 +72,4 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 	{
 		return (bool)$repository->getByEmail($control->getValue());
 	}
-	
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Security\DB;
 
-use Security\Authenticator;
-
 /**
  * Trait AdministratorRepository
  * @mixin \StORM\Repository
@@ -21,5 +19,4 @@ trait UserRepositoryTrait
 	{
 		return $this->one(['email' => $email]);
 	}
-	
 }

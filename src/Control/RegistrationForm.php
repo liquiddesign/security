@@ -15,42 +15,35 @@ use StORM\Connection;
  */
 class RegistrationForm extends \Nette\Application\UI\Form
 {
+	public const UNIQUE_LOGIN = '\Security\Control\RegistrationForm::validateLogin';
+	
 	/**
 	 * @var callable[]&callable(\Security\Control\\Security\Control\RegistrationForm , \Security\DB\Account): void; Occurs after registration
 	 */
 	public $onRegister;
 	
-	private Nette\Localization\ITranslator $translator;
+	protected Nette\Localization\ITranslator $translator;
 	
-	private \stdClass $registrationConfig;
+	protected bool $confirmation = false;
 	
-	private AccountRepository $accountRepository;
+	protected string $confirmationEmail = '';
 	
-	private TemplateRepository $templateRepository;
+	protected bool $emailAuthorization = true;
 	
-	private Nette\Mail\Mailer $mailer;
+	protected AccountRepository $accountRepository;
 	
-	private Nette\Application\LinkGenerator $linkGenerator;
+	protected TemplateRepository $templateRepository;
 	
-	const UNIQUE_LOGIN = '\Security\Control\RegistrationForm::validateLogin';
+	protected Nette\Mail\Mailer $mailer;
 	
-	public function __construct(AccountRepository $accountRepository, Nette\Localization\ITranslator $translator, TemplateRepository $templateRepository, Nette\Mail\Mailer $mailSender, Nette\Application\LinkGenerator $linkGenerator)
+	public function __construct(AccountRepository $accountRepository, Nette\Localization\ITranslator $translator, TemplateRepository $templateRepository, Nette\Mail\Mailer $mailSender)
 	{
 		parent::__construct();
+		
 		$this->translator = $translator;
 		$this->templateRepository = $templateRepository;
 		$this->mailer = $mailSender;
-		$this->linkGenerator = $linkGenerator;
 		$this->accountRepository = $accountRepository;
-		
-		// Default config
-		$this->registrationConfig = new \stdClass();
-		$this->registrationConfig->enabled = true;
-		$this->registrationConfig->default = new \stdClass();
-		$this->registrationConfig->default->type = 'retail';
-		$this->registrationConfig->confirmation = false;
-		$this->registrationConfig->confirmationEmail = '';
-		$this->registrationConfig->emailAuthorization = true;
 		
 		$this->setTranslator($translator);
 		
@@ -69,55 +62,73 @@ class RegistrationForm extends \Nette\Application\UI\Form
 			->addRule($this::EQUAL, 'registerForm.passwordCheck.notEqual', $this['password'])
 			->setRequired();
 		
+		$this->addSubmit('submit', 'registerForm.submit');
+		
 		$this->onSuccess[] = [$this, 'success'];
 	}
 	
-	public function beforeRender()
+	public function setConfirmation(bool $confirmation = true): void
 	{
-		parent::beforeRender();
-		if ($this->registrationConfig->enabled) {
-			$this->addSubmit('submit', 'registerForm.submit');
-		}
+		$this->confirmation = $confirmation;
 	}
 	
-	public function setRegistrationConfig($registrationConfig)
+	public function setConfirmationEmail(string $confirmationEmail): void
 	{
-		$this->registrationConfig = $registrationConfig;
+		$this->confirmationEmail = $confirmationEmail;
 	}
 	
-	public static function validateLogin(\Nette\Forms\IControl $control, AccountRepository $accountRepository): bool
+	public function setEmailAuthorization(bool $emailAuthorization): void
 	{
-		return !$accountRepository->one(['login' => $control->getValue()]);
+		$this->emailAuthorization = $emailAuthorization;
 	}
 	
-	public function success(RegistrationForm $form)
+	public function getConfirmationEmail(): string
+	{
+		return $this->confirmationEmail;
+	}
+	
+	public function isConfirmation(): bool
+	{
+		return $this->confirmation;
+	}
+	
+	public function isEmailAuthorization(): bool
+	{
+		return $this->emailAuthorization;
+	}
+	
+	public function success(RegistrationForm $form): void
 	{
 		$values = $form->getValues();
 		
 		$params = [
 			'email' => $values->email,
 		];
-		$token = $this->registrationConfig->emailAuthorization ? Nette\Utils\Random::generate(128) : '';
+		$token = $this->emailAuthorization ? Nette\Utils\Random::generate(128) : '';
 		
 		/** @var \Security\DB\Account $account */
 		$account = $this->accountRepository->createOne([
 			'uuid' => Connection::generateUuid(),
 			'login' => $values->login,
 			'password' => Authenticator::setCredentialTreatment($values->password),
-			'active' => !$this->registrationConfig->confirmation,
-			'authorized' => !$this->registrationConfig->emailAuthorization,
+			'active' => !$this->confirmation,
+			'authorized' => !$this->emailAuthorization,
 			'emailAndPasswordConfirmationToken' => $token,
 		]);
 		
-		$mail = $this->registrationConfig->emailAuthorization ? $this->templateRepository->createMessage('register.confirmation', $params + ['link' => $this->getPresenter()->link('//confirmUserEmail!', $token)], $values->email) : $this->templateRepository->createMessage('register.success', $params, $values->email);
+		$mail = $this->emailAuthorization ? $this->templateRepository->createMessage('register.confirmation', $params + ['link' => $this->getPresenter()->link('//confirmUserEmail!', $token)], $values->email) : $this->templateRepository->createMessage('register.success', $params, $values->email);
 		$this->mailer->send($mail);
 		
-		if ($this->registrationConfig->confirmation && isset($this->registrationConfig->confirmationEmail)) {
-			$mail = $this->templateRepository->createMessage('register.adminInfo', $params, $this->registrationConfig->confirmationEmail);
+		if ($this->confirmation && isset($this->confirmationEmail)) {
+			$mail = $this->templateRepository->createMessage('register.adminInfo', $params, $this->confirmationEmail);
 			$this->mailer->send($mail);
 		}
 		
 		$this->onRegister($this, $account);
 	}
 	
+	public static function validateLogin(\Nette\Forms\IControl $control, AccountRepository $accountRepository): bool
+	{
+		return !$accountRepository->one(['login' => $control->getValue()]);
+	}
 }

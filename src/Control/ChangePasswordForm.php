@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Security\Control;
 
 use Nette;
-use Security\DB\AccountRepository;
 use Security\DB\IUser;
 use StORM\DIConnection;
 use StORM\Repository;
@@ -16,34 +15,37 @@ use StORM\Repository;
 class ChangePasswordForm extends \Nette\Application\UI\Form
 {
 	use SecurityFormTrait;
+	public const OLD_PASSWORD_VALIDATOR = '\Security\Control\ChangePasswordForm::validateOldPassword';
+
 	/**
 	 * @var callable[]&callable(\Security\Control\ChangePasswordForm): void; Occurs after change
 	 */
 	public $onChange;
 	
-	public const OLD_PASSWORD_VALIDATOR = '\Security\Control\ChangePasswordForm::validateOldPassword';
+	protected DIConnection $connection;
 	
-	private DIConnection $connection;
+	protected Nette\Security\User $user;
 	
-	private Nette\Security\User $user;
+	protected string $class;
 	
-	private string $class;
-	
-	private Repository $repository;
+	protected Repository $repository;
 	
 	public function __construct(string $class, DIConnection $connection, Nette\Security\User $user, Nette\Localization\ITranslator $translator)
 	{
 		parent::__construct();
+
 		$this->connection = $connection;
 		
 		if (!$user->getIdentity()) {
 			throw new \InvalidArgumentException('Damaged user identity!');
 		}
+
 		$this->user = $user;
 		
-		if (!isset($class) || !is_subclass_of($class, IUser::class) || !is_subclass_of($class, Nette\Security\IIdentity::class)) {
+		if (!\is_subclass_of($class, IUser::class) || !\is_subclass_of($class, Nette\Security\IIdentity::class)) {
 			throw new \InvalidArgumentException("Wrong or empty class: $class");
 		}
+
 		$this->class = $class;
 		
 		$this->repository = $this->connection->findRepository($this->class);
@@ -62,14 +64,6 @@ class ChangePasswordForm extends \Nette\Application\UI\Form
 		$this->addSubmit('submit');
 		
 		$this->onSuccess[] = [$this, 'success'];
-		
-	}
-	
-	public static function validateOldPassword(\Nette\Forms\IControl $control, Nette\Security\User $user)
-	{
-		/** @var \Security\DB\Account $account */
-		$account = $user->getIdentity()->getAccount();
-		return $account->checkPassword($control->getValue());
 	}
 	
 	public function success(): void
@@ -83,5 +77,12 @@ class ChangePasswordForm extends \Nette\Application\UI\Form
 		
 		$this->onChange($this);
 	}
-	
+
+	public static function validateOldPassword(\Nette\Forms\IControl $control, Nette\Security\User $user): bool
+	{
+		/** @var \Security\DB\Account $account */
+		$account = $user->getIdentity()->getAccount();
+
+		return $account->checkPassword($control->getValue());
+	}
 }

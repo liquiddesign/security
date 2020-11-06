@@ -8,12 +8,12 @@ use Nette\Security\User;
 
 trait SecurityFormTrait
 {
-	private User $user;
+	protected User $user;
 	/**
 	 * For debugging use.
 	 * @param \Nette\Security\User $user
 	 */
-	public function setUser(User $user)
+	public function setUser(User $user): void
 	{
 		$this->user=$user;
 	}

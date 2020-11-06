@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Security\Control;
 
 use Nette;
-use Security\DB\Account;
 use Security\DB\IUser;
-use Security\DB\UserRepositoryTrait;
 
 /**
  * @method onLogin(\Security\Control\LoginForm $form)
@@ -27,9 +25,9 @@ class LoginForm extends \Nette\Application\UI\Form
 	 */
 	public $onLoginFail;
 	
-	private Nette\Security\User $user;
+	protected Nette\Security\User $user;
 	
-	private string $class;
+	protected string $class;
 	
 	public function __construct(string $class, Nette\Security\User $user, Nette\Localization\ITranslator $translator)
 	{
@@ -37,7 +35,7 @@ class LoginForm extends \Nette\Application\UI\Form
 		
 		$this->user = $user;
 		
-		if (!is_subclass_of($class,IUser::class) || !is_subclass_of($class,Nette\Security\IIdentity::class)) {
+		if (!\is_subclass_of($class, IUser::class) || !\is_subclass_of($class, Nette\Security\IIdentity::class)) {
 			throw new \InvalidArgumentException("Wrong or empty class: $class");
 		}
 		
@@ -48,7 +46,6 @@ class LoginForm extends \Nette\Application\UI\Form
 		$this->addPassword('password', 'loginForm.password')->setRequired(true);
 		$this->addSubmit('submit', 'loginForm.submit');
 		$this->onSuccess[] = [$this, 'submit'];
-		
 	}
 	
 	protected function submit(): void
@@ -61,5 +58,4 @@ class LoginForm extends \Nette\Application\UI\Form
 			$this->onLoginFail($this, $exception->getCode());
 		}
 	}
-	
 }
