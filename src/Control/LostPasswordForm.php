@@ -46,9 +46,13 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 			->addRule($this::EMAIL)
 			->addRule($this::EMAIL_EXISTS, 'lostPasswordForm.emailNotFound', $this->repository)
 			->setRequired();
-		$this->addSubmit('submit');
 		
 		$this->onSuccess[] = [$this, 'success'];
+	}
+	
+	protected function beforeRender()
+	{
+		$this->addSubmit('submit');
 	}
 	
 	public function success(LostPasswordForm $form): void
