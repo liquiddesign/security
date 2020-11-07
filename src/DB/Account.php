@@ -32,12 +32,12 @@ class Account extends \StORM\Entity
 	public ?string $activeTo;
 	
 	/**
-	 * @column{"default":"1"}
+	 * @column
 	 */
 	public bool $active = true;
 	
 	/**
-	 * @column{"default":"1"}
+	 * @column
 	 */
 	public bool $authorized = true;
 	
