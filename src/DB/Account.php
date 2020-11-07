@@ -55,7 +55,7 @@ class Account extends \StORM\Entity
 	 * Token pro registraci a obnovu hesla
 	 * @column
 	 */
-	public string $emailAndPasswordConfirmationToken;
+	public string $confirmationToken;
 	
 	/**
 	 * @relation
