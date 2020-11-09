@@ -113,7 +113,7 @@ class RegistrationForm extends \Nette\Application\UI\Form
 			'password' => Authenticator::setCredentialTreatment($values->password),
 			'active' => !$this->confirmation,
 			'authorized' => !$this->emailAuthorization,
-			'emailAndPasswordConfirmationToken' => $token,
+			'confirmationToken' => $token,
 		]);
 		
 		$mail = $this->emailAuthorization ? $this->templateRepository->createMessage('register.confirmation', $params + ['link' => $this->getPresenter()->link('//confirmUserEmail!', $token)], $values->email) : $this->templateRepository->createMessage('register.success', $params, $values->email);
