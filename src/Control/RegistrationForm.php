@@ -11,16 +11,22 @@ use Security\DB\AccountRepository;
 use StORM\Connection;
 
 /**
- * @method onRegister(\Security\Control\RegistrationForm $form, \Security\DB\Account $account)
+ * @method onComplete(\Security\Control\RegistrationForm $form, ?string $email, ?string $password)
+ * @method onAccountCreated(\Security\Control\RegistrationForm $form, \Security\DB\Account $account)
  */
 class RegistrationForm extends \Nette\Application\UI\Form
 {
 	public const UNIQUE_LOGIN = '\Security\Control\RegistrationForm::validateLogin';
 	
 	/**
-	 * @var callable[]&callable(\Security\Control\\Security\Control\RegistrationForm , \Security\DB\Account): void; Occurs after registration
+	 * @var callable[]&callable(\Security\Control\\Security\Control\RegistrationForm , \Security\DB\Account): void
 	 */
-	public $onRegister;
+	public $onAccountCreated;
+	
+	/**
+	 * @var callable[]&callable(\Security\Control\\Security\Control\RegistrationForm , ?string $email, ?string $password): void
+	 */
+	public $onComplete;
 	
 	protected Nette\Localization\ITranslator $translator;
 	
@@ -51,20 +57,16 @@ class RegistrationForm extends \Nette\Application\UI\Form
 			->addRule($this::UNIQUE_LOGIN, 'registerForm.account.alreadyExists', $accountRepository)
 			->setRequired();
 		
-		$this->addText('email', 'registerForm.email')
-			->addRule($this::EMAIL)
-			->setRequired();
-		
-		$this->addPassword('password', 'registerForm.password')
-			->setRequired();
+		$this->addPassword('password', 'registerForm.password');
 		
 		$this->addPassword('passwordCheck', 'registerForm.passwordCheck')
-			->addRule($this::EQUAL, 'registerForm.passwordCheck.notEqual', $this['password'])
-			->setRequired();
+			->addRule($this::EQUAL, 'registerForm.passwordCheck.notEqual', $this['password']);
 		
 		$this->addSubmit('submit', 'registerForm.submit');
 		
 		$this->onSuccess[] = [$this, 'success'];
+		
+		$this->onComplete[] = [$this, 'sendEmails'];
 	}
 	
 	public function setConfirmation(bool $confirmation = true): void
@@ -100,11 +102,10 @@ class RegistrationForm extends \Nette\Application\UI\Form
 	public function success(RegistrationForm $form): void
 	{
 		$values = $form->getValues();
+		$email = $values->email ?? $values->login;
+		$password =  $values->password ?? Nette\Utils\Random::generate(6);
 		
-		$params = [
-			'email' => $values->email,
-		];
-		$token = $this->emailAuthorization ? Nette\Utils\Random::generate(128) : '';
+		$token = $this->emailAuthorization ? Nette\Utils\Random::generate(128) : null;
 		
 		/** @var \Security\DB\Account $account */
 		$account = $this->accountRepository->createOne([
@@ -116,15 +117,26 @@ class RegistrationForm extends \Nette\Application\UI\Form
 			'confirmationToken' => $token,
 		]);
 		
-		$mail = $this->emailAuthorization ? $this->templateRepository->createMessage('register.confirmation', $params + ['link' => $this->getPresenter()->link('//confirmUserEmail!', $token)], $values->email) : $this->templateRepository->createMessage('register.success', $params, $values->email);
-		$this->mailer->send($mail);
+		$this->onAccountCreated($this, $account);
+		
+		$this->onComplete($this, $email, $values->password ?: null);
+	}
+	
+	public function sendEmails(RegistrationForm $form, $email, $password)
+	{
+		$params = [
+			'email' => $email,
+		];
+		
+		if (Nette\Utils\Validators::isEmail($email)) {
+			$mail = $this->emailAuthorization ? $this->templateRepository->createMessage('register.confirmation', $params + ['link' => $this->getPresenter()->link('//confirmUserEmail!', $token)], $email) : $this->templateRepository->createMessage('register.success', $params, $email);
+			$this->mailer->send($mail);
+		}
 		
 		if ($this->confirmation && isset($this->confirmationEmail)) {
 			$mail = $this->templateRepository->createMessage('register.adminInfo', $params, $this->confirmationEmail);
 			$this->mailer->send($mail);
 		}
-		
-		$this->onRegister($this, $account);
 	}
 	
 	public static function validateLogin(\Nette\Forms\IControl $control, AccountRepository $accountRepository): bool
