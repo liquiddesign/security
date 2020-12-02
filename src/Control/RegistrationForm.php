@@ -111,7 +111,7 @@ class RegistrationForm extends \Nette\Application\UI\Form
 		$account = $this->accountRepository->createOne([
 			'uuid' => Connection::generateUuid(),
 			'login' => $values->login,
-			'password' => Authenticator::setCredentialTreatment($values->password),
+			'password' => Authenticator::setCredentialTreatment($password),
 			'active' => !$this->confirmation,
 			'authorized' => !$this->emailAuthorization,
 			'confirmationToken' => $token,
@@ -119,7 +119,7 @@ class RegistrationForm extends \Nette\Application\UI\Form
 		
 		$this->onAccountCreated($this, $account);
 		
-		$this->onComplete($this, $email, $values->password ?: null);
+		$this->onComplete($this, $email, $password);
 	}
 	
 	public function sendEmails(RegistrationForm $form, $email, $password)
