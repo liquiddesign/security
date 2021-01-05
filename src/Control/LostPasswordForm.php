@@ -61,7 +61,7 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 		
 		$token = Nette\Utils\Random::generate(128);
 		
-		$customer = $this->repository->one(['email' => $values->email]);
+		$customer = $this->repository->many()->where('fk_account IS NOT NULL')->where('email', $values->email)->first();
 		$customer->account->update(['confirmationToken' => $token]);
 		
 		$mail = $this->templateRepository->createMessage('lostPassword', $params + ['link' => $this->getPresenter()->link('//generateNewPassword!', [$token, $values->email])], $values->email);
