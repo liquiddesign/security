@@ -6,5 +6,5 @@ namespace Security\Control;
 
 interface ILoginFormFactory
 {
-	public function create(string $class): LoginForm;
+	public function create(array $classes): LoginForm;
 }

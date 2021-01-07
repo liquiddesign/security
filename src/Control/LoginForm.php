@@ -27,19 +27,21 @@ class LoginForm extends \Nette\Application\UI\Form
 	
 	protected Nette\Security\User $user;
 	
-	protected string $class;
+	protected array $classes;
 	
-	public function __construct(string $class, Nette\Security\User $user, Nette\Localization\ITranslator $translator)
+	public function __construct(array $classes, Nette\Security\User $user, Nette\Localization\ITranslator $translator)
 	{
 		parent::__construct();
 		
 		$this->user = $user;
 		
-		if (!\is_subclass_of($class, IUser::class) || !\is_subclass_of($class, Nette\Security\IIdentity::class)) {
-			throw new \InvalidArgumentException("Wrong or empty class: $class");
+		foreach ($classes as $class) {
+			if (!\is_subclass_of($class, IUser::class) || !\is_subclass_of($class, Nette\Security\IIdentity::class)) {
+				throw new \InvalidArgumentException("Wrong or empty class: $class");
+			}
 		}
 		
-		$this->class = $class;
+		$this->classes = $classes;
 		
 		$this->setTranslator($translator);
 		$this->addText('login', 'loginForm.login')->setRequired(true);
@@ -54,7 +56,7 @@ class LoginForm extends \Nette\Application\UI\Form
 	{
 		try {
 			$values = $this->getValues();
-			$this->user->login($values->login, $values->password, $this->class);
+			$this->user->login($values->login, $values->password, $this->classes);
 			$this->onLogin($this);
 		} catch (Nette\Security\AuthenticationException $exception) {
 			$this->onLoginFail($this, $exception->getCode());
