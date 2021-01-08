@@ -8,7 +8,7 @@ use Nette;
 use Security\DB\IUser;
 
 /**
- * @method onLogin(\Security\Control\LoginForm $form)
+ * @method onLogin(\Security\Control\LoginForm $form, \Nette\Security\IIdentity $identity)
  * @method onLoginFail(\Security\Control\LoginForm $form, int $errorCode)
  */
 class LoginForm extends \Nette\Application\UI\Form
@@ -16,12 +16,12 @@ class LoginForm extends \Nette\Application\UI\Form
 	use SecurityFormTrait;
 	
 	/**
-	 * @var callable[]&callable(\Security\Control\LoginForm): void; Occurs after login
+	 * @var callable[]&callable(\Security\Control\LoginForm): void;
 	 */
 	public $onLogin;
 	
 	/**
-	 * @var callable[]&callable(\Security\Control\LoginForm): void; Occurs after login fail
+	 * @var callable[]&callable(\Security\Control\LoginForm): void;
 	 */
 	public $onLoginFail;
 	
@@ -57,7 +57,7 @@ class LoginForm extends \Nette\Application\UI\Form
 		try {
 			$values = $this->getValues();
 			$this->user->login($values->login, $values->password, $this->classes);
-			$this->onLogin($this);
+			$this->onLogin($this, $this->user->getIdentity());
 		} catch (Nette\Security\AuthenticationException $exception) {
 			$this->onLoginFail($this, $exception->getCode());
 		}
