@@ -6,5 +6,5 @@ namespace Security\Control;
 
 interface IChangePasswordFormFactory
 {
-	public function create(string $class): ChangePasswordForm;
+	public function create(): ChangePasswordForm;
 }

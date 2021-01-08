@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Security;
 
 use Nette\Security\IAuthenticator;
+use Nette\Security\IdentityHandler;
 use Nette\Security\IIdentity;
 use Security\DB\AccountRepository;
 use Security\DB\IUserRepository;
 use StORM\DIConnection;
+use StORM\Entity;
 
-class Authenticator implements IAuthenticator
+class Authenticator implements IAuthenticator, IdentityHandler
 {
 	// ERROR CODES
 	public const NOT_ACTIVE = 5;
@@ -91,5 +93,19 @@ class Authenticator implements IAuthenticator
 		}
 		
 		return false;
+	}
+	
+	function sleepIdentity(IIdentity $identity): IIdentity
+	{
+		return $identity;
+	}
+	
+	function wakeupIdentity(IIdentity $identity): ?IIdentity
+	{
+		if ($identity instanceof Entity) {
+			$identity->setParent($this->connection->findRepository(\get_class($identity)));
+		}
+		
+		return $identity;
 	}
 }
