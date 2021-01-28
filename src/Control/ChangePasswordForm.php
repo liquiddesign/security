@@ -40,8 +40,7 @@ class ChangePasswordForm extends \Nette\Application\UI\Form
 		$this->repository = $this->connection->findRepository($class);
 		
 		$this->user->getIdentity()->setParent($this->repository);
-		
-		$this->setTranslator($translator);
+
 		$this->addPassword('oldPassword')
 			->addRule([$this, 'validateOldPassword'], 'changePasswordForm.oldPasswordCheck.notEqual', $user)
 			->setRequired();

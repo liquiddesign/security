@@ -51,8 +51,6 @@ class RegistrationForm extends \Nette\Application\UI\Form
 		$this->mailer = $mailSender;
 		$this->accountRepository = $accountRepository;
 		
-		$this->setTranslator($translator);
-		
 		$this->addText('login', 'registerForm.login')
 			->addRule($this::UNIQUE_LOGIN, 'registerForm.account.alreadyExists', $accountRepository)
 			->setRequired();

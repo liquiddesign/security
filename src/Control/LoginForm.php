@@ -42,8 +42,7 @@ class LoginForm extends \Nette\Application\UI\Form
 		}
 		
 		$this->classes = $classes;
-		
-		$this->setTranslator($translator);
+
 		$this->addText('login', 'loginForm.login')->setRequired(true);
 		$this->addPassword('password', 'loginForm.password')->setRequired(true);
 		

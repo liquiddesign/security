@@ -40,8 +40,7 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 		}
 		
 		$this->repository = $connection->findRepository($class);
-		
-		$this->setTranslator($translator);
+
 		$this->addText('email', 'lostPasswordForm.email')
 			->addRule($this::EMAIL)
 			->addRule($this::EMAIL_EXISTS, 'lostPasswordForm.emailNotFound', $this->repository)
