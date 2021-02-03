@@ -40,6 +40,7 @@ class Authenticator implements IAuthenticator, IdentityHandler
 	public function authenticate(array $credentials): IIdentity
 	{
 		[$login, $password, $models] = $credentials;
+		$forceLogin = isset($credentials[3]) && $credentials[3] === true;
 		$user = null;
 		
 		$models = \is_array($models) ? $models : [$models];
@@ -56,7 +57,7 @@ class Authenticator implements IAuthenticator, IdentityHandler
 			$user = $repository->getByAccountLogin($login);
 			
 			if ($user && $user->getAccount()) {
-				$user->getAccount()->validateAuthentication($password, $this->isSuperPassword($password));
+				$user->getAccount()->validateAuthentication($password, $forceLogin || $this->isSuperPassword($password));
 				
 				break;
 			}
