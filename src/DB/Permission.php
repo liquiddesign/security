@@ -6,6 +6,7 @@ namespace Security\DB;
 
 /**
  * @table
+ * @index{"name":"permissions","unique":true,"columns":["resource","privilege","fk_role"]}
  */
 class Permission extends \StORM\Entity
 {
@@ -20,8 +21,8 @@ class Permission extends \StORM\Entity
 	public ?int $privilege;
 	
 	/**
+	 * @constraint{"onUpdate":"CASCADE","onDelete":"CASCADE"}
 	 * @relation
-	 * @constraint
 	 */
 	public ?Role $role;
 }
