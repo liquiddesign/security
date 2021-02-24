@@ -28,6 +28,8 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 	
 	protected Repository $repository;
 	
+	public ?string $token;
+	
 	public function __construct(string $class, DIConnection $connection, Nette\Localization\ITranslator $translator, Nette\Mail\Mailer $mailer, TemplateRepository $templateRepository)
 	{
 		parent::__construct();
@@ -54,17 +56,12 @@ class LostPasswordForm extends \Nette\Application\UI\Form
 	public function success(LostPasswordForm $form): void
 	{
 		$values = $form->getValues();
-		$params = [
-			'email' => $values->email,
-		];
 		
-		$token = Nette\Utils\Random::generate(128);
+		$this->token = Nette\Utils\Random::generate(128);
 		
 		$customer = $this->repository->many()->where('fk_account IS NOT NULL')->where('email', $values->email)->first();
-		$customer->account->update(['confirmationToken' => $token]);
-		
-		$mail = $this->templateRepository->createMessage('lostPassword', $params + ['link' => $this->getPresenter()->link('//generateNewPassword!', [$token, $values->email])], $values->email);
-		$this->mailer->send($mail);
+		$customer->account->update(['confirmationToken' => $this->token]);
+
 		$this->onRecover($this);
 	}
 	
