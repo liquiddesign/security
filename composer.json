@@ -21,6 +21,7 @@
 		"liquiddesign/storm": "@dev",
 		"liquiddesign/forms": "@dev",
 		"liquiddesign/messages": "@dev",
+		"liquiddesign/translator": "@dev",
 		"ext-pdo": "*"
 	},
 	"require-dev":
