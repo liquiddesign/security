@@ -48,10 +48,6 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 		$authenticator = $builder->addDefinition('authenticator')->setType(Authenticator::class);
 		$authenticator->addSetup('setSuperLogin', [$config['superLogin']]);
 		
-		// add authorizator
-		$authorizator = $builder->addDefinition('authorizator')->setType(Authorizator::class);
-		$authorizator->addSetup('setSuperRole', [$config['superRole']]);
-		
 		return;
 	}
 }
