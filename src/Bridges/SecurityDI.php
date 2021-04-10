@@ -22,7 +22,6 @@ class SecurityDI extends \Nette\DI\CompilerExtension
 	{
 		return Expect::structure([
 			'superLogin' => Expect::string(null),
-			'superRole' => Expect::string(null),
 		]);
 	}
 	
