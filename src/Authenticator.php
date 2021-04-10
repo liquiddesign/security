@@ -116,6 +116,10 @@ class Authenticator implements IAuthenticator, IdentityHandler
 			$identity->setParent($this->connection->findRepository(\get_class($identity)));
 		}
 		
+		if ($identity->getAccount()) {
+			$identity->getAccount()->setParent($this->accountRepository);
+		}
+		
 		return $identity;
 	}
 }

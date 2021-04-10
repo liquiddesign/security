@@ -57,12 +57,6 @@ class Account extends \StORM\Entity
 	 */
 	public ?string $confirmationToken;
 	
-	/**
-	 * @relation
-	 * @constraint
-	 */
-	public ?Role $role;
-	
 	public function validateAuthentication(string $password, bool $skipPasswordCheck = false): void
 	{
 		if (!Authenticator::passwordVerify($password, $this->password) && !$skipPasswordCheck) {
