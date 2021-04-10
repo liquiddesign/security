@@ -30,6 +30,11 @@ class AccessLog extends \StORM\Entity
 	public string $action;
 	
 	/**
+	 * @column
+	 */
+	public int $processed = 1;
+	
+	/**
 	 * @column{"type":"timestamp","default":"CURRENT_TIMESTAMP"}
 	 */
 	public int $tsCreated;
