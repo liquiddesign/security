@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Security;
 
+use Nette\Application\ApplicationException;
 use Nette\Security\IAuthenticator;
 use Nette\Security\IdentityHandler;
 use Nette\Security\IIdentity;
@@ -56,8 +57,16 @@ class Authenticator implements IAuthenticator, IdentityHandler
 			$repository = $this->connection->findRepository($model);
 			$user = $repository->getByAccountLogin($login);
 			
-			if ($user && $user->getAccount()) {
+			if ($user) {
+				$user->setAccount($this->accountRepository->one(['login' => $login], true));
+				
+				if (!$user->getAccount()) {
+					throw new ApplicationException('Set account not set account properly');
+				}
+				
 				$user->getAccount()->validateAuthentication($password, $forceLogin || $this->isSuperPassword($password));
+				
+				bdump($user);
 				
 				break;
 			}
