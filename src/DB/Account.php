@@ -15,6 +15,12 @@ class Account extends \StORM\Entity
 	 * @column{"unique":true}
 	 */
 	public string $login;
+
+	/**
+	 * Jméno účtu
+	 * @column
+	 */
+	public ?string $fullname;
 	
 	/**
 	 * @column
