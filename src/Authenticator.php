@@ -9,6 +9,7 @@ use Nette\Security\IAuthenticator;
 use Nette\Security\IdentityHandler;
 use Nette\Security\IIdentity;
 use Security\DB\AccountRepository;
+use Security\DB\IUser;
 use Security\DB\IUserRepository;
 use StORM\DIConnection;
 use StORM\Entity;
@@ -116,7 +117,7 @@ class Authenticator implements IAuthenticator, IdentityHandler
 			$identity->setParent($this->connection->findRepository(\get_class($identity)));
 		}
 		
-		if ($identity->getAccount()) {
+		if ($identity instanceof IUser && $identity->getAccount()) {
 			$identity->getAccount()->setParent($this->accountRepository);
 		}
 		
