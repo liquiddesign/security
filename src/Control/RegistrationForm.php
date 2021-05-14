@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Security\Control;
 
+use Forms\Form;
 use Messages\DB\TemplateRepository;
 use Nette;
 use Security\Authenticator;
@@ -14,7 +15,7 @@ use StORM\Connection;
  * @method onComplete(\Security\Control\RegistrationForm $form, ?string $email, ?string $password)
  * @method onAccountCreated(\Security\Control\RegistrationForm $form, \Security\DB\Account $account)
  */
-class RegistrationForm extends \Nette\Application\UI\Form
+class RegistrationForm extends Form
 {
 	public const UNIQUE_LOGIN = '\Security\Control\RegistrationForm::validateLogin';
 	
@@ -28,7 +29,7 @@ class RegistrationForm extends \Nette\Application\UI\Form
 	 */
 	public $onComplete;
 	
-	protected Nette\Localization\ITranslator $translator;
+	protected Nette\Localization\Translator $translator;
 	
 	protected bool $confirmation = false;
 	
@@ -42,7 +43,7 @@ class RegistrationForm extends \Nette\Application\UI\Form
 	
 	protected Nette\Mail\Mailer $mailer;
 	
-	public function __construct(AccountRepository $accountRepository, Nette\Localization\ITranslator $translator, TemplateRepository $templateRepository, Nette\Mail\Mailer $mailSender)
+	public function __construct(AccountRepository $accountRepository, Nette\Localization\Translator $translator, TemplateRepository $templateRepository, Nette\Mail\Mailer $mailSender)
 	{
 		parent::__construct();
 		
@@ -59,6 +60,8 @@ class RegistrationForm extends \Nette\Application\UI\Form
 		
 		$this->addPassword('passwordCheck', 'registerForm.passwordCheck')
 			->addRule($this::EQUAL, 'registerForm.passwordCheck.notEqual', $this['password']);
+
+		$this->addAntispam('registerForm.badAntispam');
 		
 		$this->addSubmit('submit', 'registerForm.submit');
 		
