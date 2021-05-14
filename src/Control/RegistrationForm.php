@@ -122,15 +122,28 @@ class RegistrationForm extends \Nette\Application\UI\Form
 	
 	public function sendEmails(RegistrationForm $form, $email, $password)
 	{
+		$this->sendAccountConfirmation($form, $email, $password);
+		$this->sendAdminInfo($form, $email, $password);
+	}
+
+	public function sendAccountConfirmation(RegistrationForm $form, $email, $password)
+	{
 		$params = [
 			'email' => $email,
 		];
-		
+
 		if (Nette\Utils\Validators::isEmail($email)) {
 			$mail = $this->emailAuthorization ? $this->templateRepository->createMessage('register.confirmation', $params + ['link' => $this->getPresenter()->link('//confirmUserEmail!', $token)], $email) : $this->templateRepository->createMessage('register.success', $params, $email);
 			$this->mailer->send($mail);
 		}
-		
+	}
+
+	public function sendAdminInfo(RegistrationForm $form, $email, $password)
+	{
+		$params = [
+			'email' => $email,
+		];
+
 		if ($this->confirmation && isset($this->confirmationEmail)) {
 			$mail = $this->templateRepository->createMessage('register.adminInfo', $params, $this->confirmationEmail);
 			$this->mailer->send($mail);

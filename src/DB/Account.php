@@ -62,6 +62,12 @@ class Account extends \StORM\Entity
 	 * @column
 	 */
 	public ?string $confirmationToken;
+
+	/**
+	 * Preferovaná mutace
+	 * @column
+	 */
+	public ?string $preferredMutation;
 	
 	public function validateAuthentication(string $password, bool $skipPasswordCheck = false): void
 	{
