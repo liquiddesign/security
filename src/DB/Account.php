@@ -100,4 +100,9 @@ class Account extends \StORM\Entity
 	{
 		return Authenticator::passwordVerify($password, $this->password);
 	}
+
+	public function getPreferredMutation(): ?string
+	{
+		return $this->preferredMutation;
+	}
 }
