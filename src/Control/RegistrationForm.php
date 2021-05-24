@@ -123,10 +123,10 @@ class RegistrationForm extends Form
 		$this->onComplete($this, $email, $password);
 	}
 	
-	public function sendEmails(RegistrationForm $form, $email, $password)
+	public function sendEmails(RegistrationForm $form, $email, $password, $mutation = null)
 	{
 		$this->sendAccountConfirmation($form, $email, $password);
-		$this->sendAdminInfo($form, $email, $password);
+		$this->sendAdminInfo($form, $email, $password, $mutation);
 	}
 
 	public function sendAccountConfirmation(RegistrationForm $form, $email, $password)
@@ -141,14 +141,14 @@ class RegistrationForm extends Form
 		}
 	}
 
-	public function sendAdminInfo(RegistrationForm $form, $email, $password)
+	public function sendAdminInfo(RegistrationForm $form, $email, $password, $mutation = null)
 	{
 		$params = [
 			'email' => $email,
 		];
 
 		if ($this->confirmation && isset($this->confirmationEmail)) {
-			$mail = $this->templateRepository->createMessage('register.adminInfo', $params, $this->confirmationEmail);
+			$mail = $this->templateRepository->createMessage('register.adminInfo', $params, $this->confirmationEmail, null, null, $mutation);
 			$this->mailer->send($mail);
 		}
 	}
