@@ -68,6 +68,18 @@ class Account extends \StORM\Entity
 	 * @column
 	 */
 	public ?string $preferredMutation;
+
+	/**
+	 * Přihlášen k newsletteru
+	 * @column
+	 */
+	public bool $newsletter = false;
+
+	/**
+	 * Newsletter skupina
+	 * @column
+	 */
+	public ?string $newsletterGroup;
 	
 	public function validateAuthentication(string $password, bool $skipPasswordCheck = false): void
 	{
