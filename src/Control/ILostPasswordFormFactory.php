@@ -6,5 +6,5 @@ namespace Security\Control;
 
 interface ILostPasswordFormFactory
 {
-	public function create(string $class): LostPasswordForm;
+	public function create(?string $class = null): LostPasswordForm;
 }
