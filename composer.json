@@ -1,0 +1,47 @@
+{
+	"name": "liquiddesign/security",
+	"description": "✇ Nadstavba Nette Security rozšířené o databázové služby postavené na StORMu",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {"Security\\": "src/"}
+	},
+	"autoload-dev": {
+		"psr-4": { "Security\\Tests\\": "tests/" }
+	},
+	"require" :
+	{
+		"php":">=7.4",
+		"nette/security":"~3.0",
+		"nette/utils":"~3.0",
+		"nette/nette":"~3.0",
+		"nette/di":"~3.0",
+		"liquiddesign/storm": "~1.0",
+		"firebase/php-jwt": "^5.5.0",
+		"nesbot/carbon": "^2.0"
+	},
+	"require-dev":
+	{
+		"nette/tester":"^2.0",
+		"tracy/tracy":"^2.0",
+		"composer/composer": "~2.0",
+		"liquiddesign/codestyle": "~2.0",
+		"liquiddesign/migrator": "~1.0",
+		"phpstan/phpstan": "^1.0",
+		"phpcompatibility/php-compatibility": "^9.0"
+	},
+	"scripts": {
+		"phpstan": "phpstan analyse --memory-limit 1G -c phpstan.neon",
+		"phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
+		"phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
+		"phpcheck7": "phpcs -p ./src --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 7.4",
+		"phpcheck8": "phpcs -p ./src --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.1",
+		"tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php",
+		"aux-sync-database": "Migrator\\Scripts::syncDatabase",
+		"sync-database": "@aux-sync-database Security\\Tests\\Bootstrap"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
+}

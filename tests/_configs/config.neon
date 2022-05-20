@@ -1,0 +1,34 @@
+parameters:
+	langs:
+		'cz': ''
+		'en': '_en'
+
+services:
+	- Tracy\Debugger::getBar
+	- Nette\Caching\Storages\DevNullStorage
+	- Nette\Http\Session
+	- Nette\Http\Request
+	- Nette\Http\Response
+	- Nette\Http\UrlScript
+	- Translator\DB\TranslationRepository
+	- Nette\Mail\SendmailMailer
+	- Messages\DB\TemplateRepository
+	- Nette\Application\LinkGenerator
+	- Nette\Bridges\ApplicationLatte\TemplateFactory
+	- Nette\Bridges\ApplicationLatte\LatteFactory
+	- Nette\Routing\SimpleRouter
+
+lqdSecurity:
+	superLogin: 'test'
+
+storm:
+	debug: true
+	connections:
+		default:
+			host: 127.0.0.1
+			dbname: _test_security
+			user: root
+			password: ""
+			driver: mysql
+			charset: utf8
+			collate: utf8_czech_ci
