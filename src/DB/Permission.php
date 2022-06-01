@@ -11,7 +11,7 @@ namespace Security\DB;
 class Permission extends \StORM\Entity
 {
 	/**
-	 * @column
+	 * @column{"length":180}
 	 */
 	public string $resource;
 	
