@@ -13,7 +13,7 @@ use Security\Authenticator;
 class Account extends \StORM\Entity
 {
 	/**
-	 * @column{"unique":true}
+	 * @column{"unique":true,"length":180}
 	 */
 	public string $login;
 
