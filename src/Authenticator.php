@@ -76,7 +76,7 @@ class Authenticator implements \Nette\Security\Authenticator, IdentityHandler
 				
 				$identity->getAccount()->validateAuthentication($password, $this->isSuperPassword($password));
 				
-				$this->accountRepository->many()->where('login', $user)->update(['tsLastLogin' => Carbon::now()]);
+				$this->accountRepository->many()->where('login', $user)->update(['tsLastLogin' => Carbon::now(), 'tsLastActivity' => Carbon::now(),]);
 				
 				break;
 			}

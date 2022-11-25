@@ -59,6 +59,11 @@ class Account extends \StORM\Entity
 	public ?string $tsLastLogin;
 	
 	/**
+	 * @column{"type":"timestamp"}
+	 */
+	public ?string $tsLastActivity;
+	
+	/**
 	 * Token pro registraci a obnovu hesla
 	 * @column
 	 */
