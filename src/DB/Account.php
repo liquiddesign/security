@@ -52,6 +52,11 @@ class Account extends \StORM\Entity
 	 * @column{"type":"timestamp","default":"CURRENT_TIMESTAMP"}
 	 */
 	public ?string $tsRegistered;
+
+	/**
+	 * @column{"type":"timestamp"}
+	 */
+	public ?string $tsRegisteredEmailSent;
 	
 	/**
 	 * @column{"type":"timestamp"}
