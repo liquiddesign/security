@@ -6,9 +6,11 @@ namespace Security\DB;
 
 use Carbon\Carbon;
 use Security\Authenticator;
+use StORM\RelationCollection;
 
 /**
  * @table
+ * @method \StORM\RelationCollection<\Security\DB\AccountContactInfo> getAccountContactInfos()
  */
 class Account extends \StORM\Entity
 {
@@ -79,6 +81,22 @@ class Account extends \StORM\Entity
 	 * @column
 	 */
 	public ?string $preferredMutation;
+
+	/**
+	 * @column
+	 */
+	public ?string $externalId;
+
+	/**
+	 * @column
+	 */
+	public ?string $externalCode;
+
+	/**
+	 * @relation
+	 * @var \StORM\RelationCollection<\Security\DB\AccountContactInfo>
+	 */
+	public RelationCollection $accountContactInfos;
 	
 	public function validateAuthentication(string $password, bool $skipPasswordCheck = false): void
 	{
