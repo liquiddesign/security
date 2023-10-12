@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Security\DB;
 
+use Base\ShopsConfig;
+
 /**
  * Trait AdministratorRepository
  * @mixin \StORM\Repository
@@ -12,17 +14,23 @@ trait UserRepositoryTrait
 {
 	public function getByAccountLogin(string $login): ?IUser
 	{
-		/** @var \Security\DB\IUser $user */
-		$user = $this->many()->where('accounts.login', $login)->first();
-		
-		if (!$user) {
+		$accountCollection = $this->getConnection()->findRepository(Account::class)->many()->where('login', $login);
+
+		if (isset($this->shopsConfig) && $this->shopsConfig instanceof ShopsConfig) {
+			$this->shopsConfig->filterShopsInShopEntityCollection($accountCollection);
+		}
+
+		/** @var \Security\DB\Account|null $account */
+		$account = $accountCollection->first();
+
+		if (!$account) {
 			return null;
 		}
-		
-		/** @var \Security\DB\Account|null $account */
-		$account = $this->getConnection()->findRepository(Account::class)->one(['login' => $login], false);
-		
-		if (!$account) {
+
+		/** @var \Security\DB\IUser $user */
+		$user = $this->many()->where('accounts.uuid', $account->getPK())->first();
+
+		if (!$user) {
 			return null;
 		}
 		
