@@ -11,7 +11,7 @@ use StORM\RelationCollection;
 
 /**
  * @table
- * @index{"name":"account_loginshop","unique":true,"columns":["login", "fk_shop"]}
+ * @index{"name":"security_account_login","unique":true,"columns":["login", "fk_shop"]}
  * @method \StORM\RelationCollection<\Security\DB\AccountContactInfo> getAccountContactInfos()
  */
 class Account extends ShopEntity
