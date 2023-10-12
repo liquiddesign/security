@@ -10,12 +10,13 @@
 	},
 	"require" :
 	{
-		"php":">=7.4",
+		"php":">=8.2",
 		"nette/security":"~3.0",
 		"nette/utils":"~3.0",
 		"nette/nette":"~3.0",
 		"nette/di":"~3.0",
 		"liquiddesign/storm": "~1.0",
+		"liquiddesign/base": "~2.0",
 		"firebase/php-jwt": "^5.5.0",
 		"nesbot/carbon": "^2.0"
 	},
@@ -30,9 +31,11 @@
 		"phpcompatibility/php-compatibility": "^9.0"
 	},
 	"scripts": {
+		"fix-code": ["@phpcsfix"],
+		"check-code": ["@phpcs", "@phpstan"],
 		"phpstan": "phpstan analyse --memory-limit 1G -c phpstan.neon",
-		"phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
-		"phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
+		"phpcs": "phpcs --standard=ruleset.xml --cache --ignore=assets src",
+		"phpcsfix": "phpcbf --standard=ruleset.xml --cache --ignore=assets src",
 		"phpcheck7": "phpcs -p ./src --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 7.4",
 		"phpcheck8": "phpcs -p ./src --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.1",
 		"tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php",

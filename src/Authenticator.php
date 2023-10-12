@@ -97,7 +97,6 @@ class Authenticator implements \Nette\Security\Authenticator, IdentityHandler
 	public function wakeupIdentity(IIdentity $identity): ?IIdentity
 	{
 		if ($identity instanceof Entity) {
-			/** @phpstan-ignore-next-line */
 			$identity->setParent($this->connection->findRepository(\get_class($identity)));
 		}
 		

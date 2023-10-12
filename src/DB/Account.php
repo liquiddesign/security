@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Security\DB;
 
+use Base\Entity\ShopEntity;
 use Carbon\Carbon;
 use Security\Authenticator;
 use StORM\RelationCollection;
 
 /**
  * @table
+ * @index{"name":"account_loginshop","unique":true,"columns":["login", "fk_shop"]}
  * @method \StORM\RelationCollection<\Security\DB\AccountContactInfo> getAccountContactInfos()
  */
-class Account extends \StORM\Entity
+class Account extends ShopEntity
 {
 	/**
-	 * @column{"unique":true,"length":180}
+	 * @column{"length":180}
 	 */
 	public string $login;
 
