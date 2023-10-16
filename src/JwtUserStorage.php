@@ -22,7 +22,10 @@ class JwtUserStorage implements UserStorage
 	private int $tokenExpiration;
 	
 	private string $jwtSecret = '';
-	
+
+	/**
+	 * @var \Security\DB\AccountRepository<\Security\DB\Account>
+	 */
 	private AccountRepository $accountRepository;
 	
 	private DIConnection $connection;
@@ -30,7 +33,13 @@ class JwtUserStorage implements UserStorage
 	private IResponse $response;
 	
 	private IRequest $request;
-	
+
+	/**
+	 * @param \Security\DB\AccountRepository<\Security\DB\Account> $accountRepository
+	 * @param \StORM\DIConnection $connection
+	 * @param \Nette\Http\IResponse $response
+	 * @param \Nette\Http\IRequest $request
+	 */
 	public function __construct(AccountRepository $accountRepository, DIConnection $connection, IResponse $response, IRequest $request)
 	{
 		$this->accountRepository = $accountRepository;

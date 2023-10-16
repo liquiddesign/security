@@ -21,15 +21,23 @@ class Authenticator implements \Nette\Security\Authenticator, IdentityHandler
 	// ERROR CODES
 	public const NOT_ACTIVE = 5;
 	public const UNAUTHORIZED = 6;
-	
+
+	/**
+	 * @var \Security\DB\AccountRepository<\Security\DB\Account>
+	 */
 	private AccountRepository $accountRepository;
 
 	private DIConnection $connection;
-	
+
 	private ?string $superLogin = null;
-	
+
 	private Passwords $passwords;
-	
+
+	/**
+	 * @param \Security\DB\AccountRepository<\Security\DB\Account> $accountRepository
+	 * @param \Nette\Security\Passwords $passwords
+	 * @param \StORM\DIConnection $connection
+	 */
 	public function __construct(AccountRepository $accountRepository, Passwords $passwords, DIConnection $connection)
 	{
 		$this->accountRepository = $accountRepository;

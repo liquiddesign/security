@@ -102,7 +102,7 @@ class Account extends ShopEntity
 	
 	public function validateAuthentication(string $password, bool $skipPasswordCheck = false): void
 	{
-		/** @var \Security\DB\AccountRepository $repository */
+		/** @var \Security\DB\AccountRepository<\Security\DB\Account> $repository */
 		$repository = $this->getRepository();
 		
 		if (!$repository->getPasswords()->verify($password, $this->password) && !$skipPasswordCheck) {
@@ -127,7 +127,7 @@ class Account extends ShopEntity
 	
 	public function changePassword(string $newPassword): void
 	{
-		/** @var \Security\DB\AccountRepository $repository */
+		/** @var \Security\DB\AccountRepository<\Security\DB\Account> $repository */
 		$repository = $this->getRepository();
 		
 		$this->update(['password' => $repository->getPasswords()->hash($newPassword)]);
@@ -135,7 +135,7 @@ class Account extends ShopEntity
 	
 	public function checkPassword(string $password): bool
 	{
-		/** @var \Security\DB\AccountRepository $repository */
+		/** @var \Security\DB\AccountRepository<\Security\DB\Account> $repository */
 		$repository = $this->getRepository();
 		
 		return $repository->getPasswords()->verify($password, $this->password);
