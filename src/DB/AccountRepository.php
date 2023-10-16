@@ -10,7 +10,8 @@ use StORM\SchemaManager;
 
 /**
  * Class AccountRepository
- * @extends \StORM\Repository<\Security\DB\Account>
+ * @template T of \Security\DB\Account
+ * @extends \StORM\Repository<T>
  */
 class AccountRepository extends \StORM\Repository
 {
