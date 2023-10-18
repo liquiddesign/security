@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Security\DB;
 
+use Base\ShopsConfig;
 use Nette\Security\Passwords;
 use StORM\DIConnection;
 use StORM\SchemaManager;
@@ -15,17 +16,22 @@ use StORM\SchemaManager;
  */
 class AccountRepository extends \StORM\Repository
 {
-	private Passwords $passwords;
-	
-	public function __construct(DIConnection $connection, SchemaManager $schemaManager, Passwords $passwords)
+	public function __construct(DIConnection $connection, SchemaManager $schemaManager, protected readonly Passwords $passwords, protected readonly ShopsConfig $shopsConfig)
 	{
 		parent::__construct($connection, $schemaManager);
-		
-		$this->passwords = $passwords;
 	}
 	
 	public function getPasswords(): Passwords
 	{
 		return $this->passwords;
+	}
+
+	public function findByLogin(string $login): ?Account
+	{
+		$query = $this->many()->where('this.login', $login);
+
+		$this->shopsConfig->filterShopsInShopEntityCollection($query);
+
+		return $query->first();
 	}
 }

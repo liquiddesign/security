@@ -64,7 +64,7 @@ class JwtUserStorage implements UserStorage
 		
 		$userData = [
 			'account' => $identity->getAccount()->getPK(),
-			'identityType' => \get_class($identity),
+			'identityType' => $identity::class,
 			'expiration' => $this->tokenExpiration,
 		];
 		$jwt = JWT::encode($userData, $this->jwtSecret);

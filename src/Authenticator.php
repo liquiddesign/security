@@ -27,22 +27,16 @@ class Authenticator implements \Nette\Security\Authenticator, IdentityHandler
 	 */
 	private AccountRepository $accountRepository;
 
-	private DIConnection $connection;
-
 	private ?string $superLogin = null;
-
-	private Passwords $passwords;
 
 	/**
 	 * @param \Security\DB\AccountRepository<\Security\DB\Account> $accountRepository
 	 * @param \Nette\Security\Passwords $passwords
 	 * @param \StORM\DIConnection $connection
 	 */
-	public function __construct(AccountRepository $accountRepository, Passwords $passwords, DIConnection $connection)
+	public function __construct(AccountRepository $accountRepository, private readonly Passwords $passwords, private readonly DIConnection $connection)
 	{
 		$this->accountRepository = $accountRepository;
-		$this->connection = $connection;
-		$this->passwords = $passwords;
 	}
 	
 	public function setSuperLogin(?string $login): void
@@ -73,18 +67,18 @@ class Authenticator implements \Nette\Security\Authenticator, IdentityHandler
 			/** @var \Security\DB\IUserRepository $repository */
 			$repository = $this->connection->findRepository($model);
 			$identity = $repository->getByAccountLogin($user);
-			$account = $this->accountRepository->one(['login' => $user]);
-			
+			$account = $this->accountRepository->findByLogin($user);
+
 			if ($identity && $account) {
 				$identity->setAccount($account);
 				
 				if (!$identity->getAccount() instanceof Account) {
 					throw new ApplicationException('Set account failed');
 				}
-				
-				$identity->getAccount()->validateAuthentication($password, $this->isSuperPassword($password));
-				
-				$this->accountRepository->many()->where('login', $user)->update(['tsLastLogin' => Carbon::now(), 'tsLastActivity' => Carbon::now(),]);
+
+				$account->validateAuthentication($password, $this->isSuperPassword($password));
+
+				$account->update(['tsLastLogin' => Carbon::now()->toDateTimeString(), 'tsLastActivity' => Carbon::now()->toDateTimeString(),]);
 				
 				break;
 			}
@@ -105,7 +99,7 @@ class Authenticator implements \Nette\Security\Authenticator, IdentityHandler
 	public function wakeupIdentity(IIdentity $identity): ?IIdentity
 	{
 		if ($identity instanceof Entity) {
-			$identity->setParent($this->connection->findRepository(\get_class($identity)));
+			$identity->setParent($this->connection->findRepository($identity::class));
 		}
 		
 		if ($identity instanceof IUser && $identity->getAccount() !== null) {
