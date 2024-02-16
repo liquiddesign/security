@@ -2,9 +2,9 @@ name: Analysis
 
 on:
   push:
-    branches: [ main, '1.2' ]
+    branches: [ '2.0' ]
   pull_request:
-    branches: [ main, '1.2' ]
+    branches: [ '2.0' ]
 
 jobs:
   build:
@@ -16,7 +16,11 @@ jobs:
         run: |
           git config --global core.autocrlf true
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
 
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -42,11 +46,8 @@ jobs:
       - name: Run phpcs
         run: composer phpcs
 
-      - name: Run phpcheck
-        run: composer phpcheck7
-
-      - name: Run phpcheck
-        run: composer phpcheck8
+      - name: Run commit check
+        run: composer check-commit
 
       - uses: 8398a7/action-slack@v3
         with:
