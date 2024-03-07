@@ -12,10 +12,10 @@
 	{
 		"php":">=8.2",
 		"nette/security":"~3.0",
-		"nette/utils":"~3.0",
+		"nette/utils":"~4.0",
 		"nette/nette":"~3.0",
 		"nette/di":"~3.0",
-		"liquiddesign/storm": "~1.0",
+		"liquiddesign/storm": "~2.0",
 		"liquiddesign/base": "~2.0",
 		"firebase/php-jwt": "^5.5.0",
 		"nesbot/carbon": "^2.0"
@@ -41,7 +41,11 @@
 		"tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php",
 		"aux-sync-database": "Migrator\\Scripts::syncDatabase",
 		"sync-database": "@aux-sync-database Security\\Tests\\Bootstrap",
-		"check-commit": "@php ./vendor/liquiddesign/codestyle/src/scripts/check-last-commit.php"
+		"check-commit": "@php ./vendor/liquiddesign/codestyle/src/scripts/check-last-commit.php",
+		"release": "@changelog --commit",
+		"release:patch": "@changelog --patch --commit",
+		"release:minor": "@changelog --minor --commit",
+		"release:major": "@changelog --major --commit"
 	},
 	"config": {
 		"allow-plugins": {
