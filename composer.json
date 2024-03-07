@@ -42,6 +42,7 @@
 		"aux-sync-database": "Migrator\\Scripts::syncDatabase",
 		"sync-database": "@aux-sync-database Security\\Tests\\Bootstrap",
 		"check-commit": "@php ./vendor/liquiddesign/codestyle/src/scripts/check-last-commit.php",
+		"changelog": "conventional-changelog",
 		"release": "@changelog --commit",
 		"release:patch": "@changelog --patch --commit",
 		"release:minor": "@changelog --minor --commit",
