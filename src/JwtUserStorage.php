@@ -67,7 +67,7 @@ class JwtUserStorage implements UserStorage
 			'identityType' => $identity::class,
 			'expiration' => $this->tokenExpiration,
 		];
-		$jwt = JWT::encode($userData, $this->jwtSecret);
+		$jwt = JWT::encode($userData, $this->jwtSecret, 'RS512');
 		
 		$this->response->setCookie(self::COOKIE_NAME, $jwt, $this->tokenExpiration, '/', null, true);
 	}
