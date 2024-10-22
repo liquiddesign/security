@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.0.10](https://github.com/liquiddesign/security/compare/v2.0.9...v2.0.10) (2024-10-22)
+
+### Features
+
+* Add generic type hints to AccountContactInfo and Account repositories ([e3d619](https://github.com/liquiddesign/security/commit/e3d619ea085f50a3dd6bd4aed8b298087de43284))
+
+
+---
+
 ## [2.0.9](https://github.com/liquiddesign/security/compare/v2.0.8...v2.0.9) (2024-10-21)
 
 
