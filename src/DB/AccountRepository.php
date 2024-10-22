@@ -11,7 +11,7 @@ use StORM\SchemaManager;
 
 /**
  * Class AccountRepository
- * @template T of \Security\DB\Account
+ * @template T of \Security\DB\Account = \Security\DB\Account
  * @extends \StORM\Repository<T>
  */
 class AccountRepository extends \StORM\Repository
