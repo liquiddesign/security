@@ -21,6 +21,11 @@ class AccountContactInfo extends Entity
 	public string $value;
 
 	/**
+	 * @column
+	 */
+	public string|null $externalId;
+
+	/**
 	 * @relation
 	 * @constraint{"onUpdate":"CASCADE","onDelete":"CASCADE"}
 	 */
