@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.0.11](https://github.com/liquiddesign/security/compare/v2.0.10...v2.0.11) (2025-01-23)
+
+### Features
+
+
+##### Account Contact Info
+
+* Add externalId property ([887378](https://github.com/liquiddesign/security/commit/8873782887fbbaa73e9fec176e89e1ad04d4935c))
+
+
+---
+
 ## [2.0.10](https://github.com/liquiddesign/security/compare/v2.0.9...v2.0.10) (2024-10-22)
 
 ### Features
