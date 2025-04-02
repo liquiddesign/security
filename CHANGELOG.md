@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.0.12](https://github.com/liquiddesign/security/compare/v2.0.11...v2.0.12) (2025-04-02)
+
+### Features
+
+
+##### Account Contact Info
+
+* Extend contact type options and add timestamps ([6c7244](https://github.com/liquiddesign/security/commit/6c7244720f8dccd18fe67a4a81b846b9cb7b2588))
+
+
+---
+
 ## [2.0.11](https://github.com/liquiddesign/security/compare/v2.0.10...v2.0.11) (2025-01-23)
 
 ### Features
