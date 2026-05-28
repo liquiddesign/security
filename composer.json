@@ -66,6 +66,5 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
-    },
-    "version": "2.0.13"
+    }
 }
