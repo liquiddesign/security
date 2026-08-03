@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.0.17](https://github.com/liquiddesign/security/compare/v2.0.16...v2.0.17) (2026-08-03)
+
+### Bug Fixes
+
+##### Authenticator
+
+* Resolve the identity from the shop-scoped account instead of from the login. `getByAccountLogin()` is not always shop-scoped and selects an account by login alone, so with the same login present in several shops it could pair an identity from one shop with an account from another; `validateAuthentication()` then ran against a foreign account. `authenticate()` now looks up the account via the always-shop-scoped `findByLogin()` and binds the identity to it through the new `IUserRepository::getByAccount()`, which supersedes and generalises the v2.0.16 cross-shop guard ([2.0](https://github.com/liquiddesign/security/tree/2.0))
+
+---
+
 ## [2.0.16](https://github.com/liquiddesign/security/compare/v2.0.15...v2.0.16) (2026-08-03)
 
 ### Bug Fixes

@@ -7,4 +7,6 @@ namespace Security\DB;
 interface IUserRepository
 {
 	public function getByAccountLogin(string $login): ?IUser;
+
+	public function getByAccount(Account $account): ?IUser;
 }

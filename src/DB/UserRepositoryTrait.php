@@ -35,10 +35,24 @@ trait UserRepositoryTrait
 		}
 		
 		$user->setAccount($account);
-		
+
 		return $user;
 	}
-	
+
+	public function getByAccount(Account $account): ?IUser
+	{
+		/** @var \Security\DB\IUser|null $user */
+		$user = $this->many()->where('accounts.uuid', $account->getPK())->first();
+
+		if (!$user) {
+			return null;
+		}
+
+		$user->setAccount($account);
+
+		return $user;
+	}
+
 	public function getByEmail(string $email): ?IUser
 	{
 		return $this->one(['email' => $email]);

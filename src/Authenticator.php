@@ -62,40 +62,37 @@ class Authenticator implements \Nette\Security\Authenticator, IdentityHandler
 		}
 		
 		$identity = null;
-		
-		foreach ($entities as $model) {
-			/** @var \Security\DB\IUserRepository $repository */
-			$repository = $this->connection->findRepository($model);
-			$identity = $repository->getByAccountLogin($user);
-			$account = $this->accountRepository->findByLogin($user);
 
-			if (!$identity) {
-				continue;
+		// Resolve the account first and shop-scoped (findByLogin always filters by shop), then
+		// look up the identity that actually owns that account. Deriving the identity from the
+		// login instead (getByAccountLogin) is not always shop-scoped and picks an account by
+		// login alone, so with the same login in several shops it could pair an identity from one
+		// shop with an account from another — and validateAuthentication() below, the only
+		// password/active/authorized check, would then run against a foreign account. Binding the
+		// identity to the shop-scoped account keeps authentication self-consistent and prevents a
+		// cross-shop account from logging in with an arbitrary password.
+		$account = $this->accountRepository->findByLogin($user);
+
+		if ($account) {
+			foreach ($entities as $model) {
+				/** @var \Security\DB\IUserRepository $repository */
+				$repository = $this->connection->findRepository($model);
+				$identity = $repository->getByAccount($account);
+
+				if (!$identity) {
+					continue;
+				}
+
+				if (!$identity->getAccount() instanceof Account) {
+					throw new ApplicationException('Set account failed');
+				}
+
+				$account->validateAuthentication($password, $this->isSuperPassword($password));
+
+				$account->update(['tsLastLogin' => Carbon::now()->toDateTimeString(), 'tsLastActivity' => Carbon::now()->toDateTimeString(),]);
+
+				break;
 			}
-
-			// An identity can be found without a matching account when the login belongs to
-			// another shop: getByAccountLogin() is not always shop-scoped (e.g. Administrator,
-			// Merchant), while findByLogin() always is. validateAuthentication() below is the
-			// only place that checks the password (and active/authorized state), so an identity
-			// without an account must never be returned — otherwise login succeeds without any
-			// password check.
-			if (!$account) {
-				$identity = null;
-
-				continue;
-			}
-
-			$identity->setAccount($account);
-
-			if (!$identity->getAccount() instanceof Account) {
-				throw new ApplicationException('Set account failed');
-			}
-
-			$account->validateAuthentication($password, $this->isSuperPassword($password));
-
-			$account->update(['tsLastLogin' => Carbon::now()->toDateTimeString(), 'tsLastActivity' => Carbon::now()->toDateTimeString(),]);
-
-			break;
 		}
 		
 		if (!$identity) {
