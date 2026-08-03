@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.0.16](https://github.com/liquiddesign/security/compare/v2.0.15...v2.0.16) (2026-08-03)
+
+### Bug Fixes
+
+##### Authenticator
+
+* Reject a login whose identity is found but whose account is out of the current shop scope. `getByAccountLogin()` is not always shop-scoped (Administrator, Merchant) while `findByLogin()` always is, so a cross-shop login resolved an identity without an account; the loop then fell through to `return $identity` while `validateAuthentication()` — the only password/active/authorized check — was skipped, letting such accounts log in with any password. The identity is now discarded when its account is missing ([2.0](https://github.com/liquiddesign/security/tree/2.0))
+
+---
+
 ## [2.0.12](https://github.com/liquiddesign/security/compare/v2.0.11...v2.0.12) (2025-04-02)
 
 ### Features

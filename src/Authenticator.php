@@ -69,19 +69,33 @@ class Authenticator implements \Nette\Security\Authenticator, IdentityHandler
 			$identity = $repository->getByAccountLogin($user);
 			$account = $this->accountRepository->findByLogin($user);
 
-			if ($identity && $account) {
-				$identity->setAccount($account);
-				
-				if (!$identity->getAccount() instanceof Account) {
-					throw new ApplicationException('Set account failed');
-				}
-
-				$account->validateAuthentication($password, $this->isSuperPassword($password));
-
-				$account->update(['tsLastLogin' => Carbon::now()->toDateTimeString(), 'tsLastActivity' => Carbon::now()->toDateTimeString(),]);
-				
-				break;
+			if (!$identity) {
+				continue;
 			}
+
+			// An identity can be found without a matching account when the login belongs to
+			// another shop: getByAccountLogin() is not always shop-scoped (e.g. Administrator,
+			// Merchant), while findByLogin() always is. validateAuthentication() below is the
+			// only place that checks the password (and active/authorized state), so an identity
+			// without an account must never be returned — otherwise login succeeds without any
+			// password check.
+			if (!$account) {
+				$identity = null;
+
+				continue;
+			}
+
+			$identity->setAccount($account);
+
+			if (!$identity->getAccount() instanceof Account) {
+				throw new ApplicationException('Set account failed');
+			}
+
+			$account->validateAuthentication($password, $this->isSuperPassword($password));
+
+			$account->update(['tsLastLogin' => Carbon::now()->toDateTimeString(), 'tsLastActivity' => Carbon::now()->toDateTimeString(),]);
+
+			break;
 		}
 		
 		if (!$identity) {
